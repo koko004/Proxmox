@@ -19,10 +19,29 @@ MACAddress=<mac-address-here>
 NamePolicy=kernel database onboard slot path
 MACAddressPolicy=persistent
 WakeOnLan= magic
+```
+Edit `/etc/interfaces` with `nano /etc/network/interfaces` and add line `post-up /sbin/ethtool -s <interface name> wol g` below to the label of the physical interface like:
+```                                                       
+auto lo
+iface lo inet loopback
 
+post-up /sbin/ethtool -s enp8s0 wol g
+
+iface enp8s0 inet manual
+
+auto vmbr0
+iface vmbr0 inet static
+        address 192.168.1.249/24
+        gateway 192.168.1.1
+        bridge-ports enp8s0
+        bridge-stp off
+        bridge-fd 0
+
+
+source /etc/network/interfaces.d/*
 ```
 
-How to see configuration of interface
+How to see WOL configuration of interface. If Wake-on: pumbg, “g” means WOL is supported
 ```
 ethtool <interface-name> | grep Wake-on
 ```
